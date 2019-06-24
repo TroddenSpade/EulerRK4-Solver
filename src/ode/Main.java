@@ -1,17 +1,20 @@
 
 package ode;
 
+import javafx.scene.shape.Circle;
+import sun.tools.jps.Jps;
+
 import java.awt.*;
 import javax.swing.*;
 
 public class Main extends JFrame{
 
     Graph graph;
+    JLabel euler = new JLabel("Euler");
+    JLabel runge = new JLabel("RungeKutta");
     JLabel x0 = new JLabel("x0 :");
     JTextField inputX0 = new JTextField(5);
-    JLabel x = new JLabel("x :");
-    JTextField inputX = new JTextField(5);
-    JLabel y = new JLabel("y(0) :");
+    JLabel y = new JLabel("y(x0) :");
     JTextField inputY = new JTextField(5);
     JLabel h = new JLabel("h :");
     JTextField inputH = new JTextField(5);
@@ -32,6 +35,8 @@ public class Main extends JFrame{
     JTextField nT = new JTextField(2);
     JTextField pT = new JTextField(2);
     JTextField qT = new JTextField(2);
+    JTextField eX = new JTextField(2);
+    JTextField eXN = new JTextField(2);
 
     JLabel yP = new JLabel("Y' = ");
     JLabel aL = new JLabel("F(x,y) =");
@@ -42,7 +47,7 @@ public class Main extends JFrame{
     JLabel fL = new JLabel("Y +");
     JLabel pL = new JLabel("X^");
     JLabel qL = new JLabel(".Y^");
-    JLabel gL = new JLabel(" +");
+    JLabel gL = new JLabel("+");
     JLabel hL = new JLabel("Sin(");
     JLabel iL = new JLabel("X) +");
     JLabel jL = new JLabel("Sin(");
@@ -51,22 +56,30 @@ public class Main extends JFrame{
     JLabel mL = new JLabel("X) +");
     JLabel nL = new JLabel("Cos(");
     JLabel lastl = new JLabel("Y)");
+    JLabel exp = new JLabel("e^");
+    JLabel plus = new JLabel("+");
 
-    JButton drawEuler = new JButton("Euler");
-    JButton drawRunge = new JButton("Runge kutta");
+    JButton draw = new JButton("Draw");
 
     public Main() {
-        super("Euler - RungeKutta");
+        super("Euler Runge-Kutta");
         JPanel mainPanel = new JPanel(new BorderLayout());
-        JPanel setX = new JPanel();
-        JPanel setY = new JPanel();
+        JPanel name = new JPanel();
+        JPanel setXY = new JPanel();
         JPanel setH = new JPanel();
         JPanel settings = new JPanel();
         JPanel function = new JPanel();
+        JPanel polyX = new JPanel();
+        JPanel polyY = new JPanel();
+        JPanel multi = new JPanel();
+        JPanel scX = new JPanel();
+        JPanel scY = new JPanel();
+        JPanel cost = new JPanel();
+        JPanel eExp = new JPanel();
         settings.setLayout(new BoxLayout(settings, BoxLayout.Y_AXIS));
         settings.setPreferredSize(
                 new Dimension(
-                        (int)Toolkit.getDefaultToolkit().getScreenSize().getWidth()/6,
+                        (int)Toolkit.getDefaultToolkit().getScreenSize().getWidth()/5,
                         (int)Toolkit.getDefaultToolkit().getScreenSize().getHeight()));
 
         graph = new Graph();
@@ -80,38 +93,53 @@ public class Main extends JFrame{
         super.setVisible(true);
 
 
-        setX.add(x0);setX.add(inputX0);setX.add(x);
-        setX.add(inputX);setY.add(y);setY.add(inputY);
+        setXY.add(x0);setXY.add(inputX0);
+        setXY.add(y);setXY.add(inputY);
         setH.add(h);setH.add(inputH);
+        name.add(euler);name.add(runge);
 
-        settings.add(setX);settings.add(setY);settings.add(setH);
-        settings.add(drawEuler);settings.add(drawRunge);
+        euler.setForeground(Color.BLUE);
+        runge.setForeground(Color.RED);
+        euler.setFont(new Font("TimesRoman", Font.BOLD, 32));
+        runge.setFont(new Font("TimesRoman", Font.BOLD, 32));
+        yP.setFont(new Font("TimesRoman", Font.ITALIC, 24));
+        aL.setFont(new Font("TimesRoman", Font.ITALIC, 24));
 
-        function.add(yP);
-        function.add(aL);function.add(aT);
-        function.add(bL);function.add(bT);
-        function.add(dL);function.add(dT);
-        function.add(eL);function.add(eT);
-        function.add(fL);function.add(fT);
-        function.add(cL);function.add(cT);
-        function.add(pL);function.add(pT);
-        function.add(qL);function.add(qT);
-        function.add(gL);function.add(gT);
-        function.add(hL);function.add(hT);
-        function.add(iL);function.add(iT);
-        function.add(jL);function.add(jT);
-        function.add(kL);function.add(kT);
-        function.add(lL);function.add(lT);
-        function.add(mL);function.add(mT);
-        function.add(nL);function.add(nT);
-        function.add(lastl);
+        settings.add(name);
+        settings.add(setXY);settings.add(setXY);settings.add(setH);
+        settings.add(function);
+        settings.add(polyX);
+        settings.add(polyY);
+        settings.add(multi);
+        settings.add(eExp);
+        settings.add(scX);
+        settings.add(scY);
+        settings.add(cost);
+        settings.add(draw);
 
-        drawEuler.addActionListener(e -> {
-            setSettings();
-            setFunction();
-            graph.repaint();
-        });
-        drawRunge.addActionListener(e -> {
+        function.add(yP);function.add(aL);
+        polyX.add(aT);polyX.add(bL);
+        polyX.add(bT);polyX.add(dL);
+        polyY.add(dT);polyY.add(eL);
+        polyY.add(eT);polyY.add(fL);
+        eExp.add(eX);eExp.add(exp);eExp.add(eXN);eExp.add(plus);
+        cost.add(fT);
+        multi.add(cT);multi.add(pL);multi.add(pT);multi.add(qL);multi.add(qT);multi.add(gL);
+        scX.add(gT);scX.add(hL);scX.add(hT);scX.add(iL);
+        scY.add(iT);scY.add(jL);scY.add(jT);scY.add(kL);
+        scX.add(kT);scX.add(lL);scX.add(lT);scX.add(mL);
+        scY.add(mT);scY.add(nL);scY.add(nT);scY.add(lastl);scY.add(cL);
+
+        function.setMaximumSize(function.getPreferredSize());
+        polyX.setMaximumSize(polyX.getPreferredSize());
+        polyY.setMaximumSize(polyY.getPreferredSize());
+        eExp.setMaximumSize(eExp.getPreferredSize());
+        multi.setMaximumSize(multi.getPreferredSize());
+        scX.setMaximumSize(scX.getPreferredSize());
+        scY.setMaximumSize(scY.getPreferredSize());
+//        cost.setMaximumSize(function.getPreferredSize());
+
+        draw.addActionListener(e -> {
             setSettings();
             setFunction();
             graph.repaint();
@@ -136,13 +164,14 @@ public class Main extends JFrame{
                 checkZero(mT.getText()),
                 checkZero(nT.getText()),
                 checkZero(pT.getText()),
-                checkZero(qT.getText()));
+                checkZero(qT.getText()),
+                checkZero(eXN.getText()),
+                checkZero(eX.getText()));
     }
 
     public void setSettings(){
         graph.setSettings(
                 checkZero(inputX0.getText()),
-                checkZero(inputX.getText()),
                 checkZero(inputY.getText()),
                 checkZero(inputH.getText()));
     }
