@@ -1,15 +1,36 @@
-
 package ode;
 
-import javafx.scene.shape.Circle;
-import sun.tools.jps.Jps;
-
 import java.awt.*;
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 public class Main extends JFrame{
+    static JFrame frame;
+    private URI github;
+    private URI drHA;
 
     Graph graph;
+    JMenuBar menuBar = new JMenuBar();
+    JMenu file = new JMenu("File");
+    JMenu more = new JMenu("Help");
+
+    JMenuItem about = new JMenuItem(new AbstractAction("About Us") {
+        public void actionPerformed(ActionEvent e) {
+            modal(frame);
+        }
+    });
+
+    JMenuItem save = new JMenuItem(new AbstractAction("Save") {
+        public void actionPerformed(ActionEvent e) {
+
+        }
+    });
+
     JLabel euler = new JLabel("Euler");
     JLabel runge = new JLabel("RungeKutta");
     JLabel x0 = new JLabel("x0 :");
@@ -63,6 +84,12 @@ public class Main extends JFrame{
 
     public Main() {
         super("Euler Runge-Kutta");
+        try {
+            github = new URI("https://github.com/TroddenSpade");
+            drHA = new URI("https://wp.kntu.ac.ir/aliakbarian/");
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
         JPanel mainPanel = new JPanel(new BorderLayout());
         JPanel name = new JPanel();
         JPanel setXY = new JPanel();
@@ -76,6 +103,29 @@ public class Main extends JFrame{
         JPanel scY = new JPanel();
         JPanel cost = new JPanel();
         JPanel eExp = new JPanel();
+        name.setBackground(Color.WHITE);
+        setXY.setBackground(Color.WHITE);
+        setH.setBackground(Color.WHITE);
+        settings.setBackground(Color.WHITE);
+        function.setBackground(Color.WHITE);
+        polyX.setBackground(Color.WHITE);
+        polyY.setBackground(Color.WHITE);
+        multi.setBackground(Color.WHITE);
+        scX.setBackground(Color.WHITE);
+        scY.setBackground(Color.WHITE);
+        cost.setBackground(Color.WHITE);
+        eExp.setBackground(Color.WHITE);
+
+        more.setPreferredSize(new Dimension(50,30));
+        file.setPreferredSize(new Dimension(50,30));
+        menuBar.setBorderPainted(false);
+        menuBar.setBackground(Color.WHITE);
+        menuBar.setForeground(Color.GRAY);
+        more.add(about);
+        file.add(save);
+        menuBar.add(file);
+        menuBar.add(more);
+        this.setJMenuBar(menuBar);
         settings.setLayout(new BoxLayout(settings, BoxLayout.Y_AXIS));
         settings.setPreferredSize(
                 new Dimension(
@@ -85,7 +135,6 @@ public class Main extends JFrame{
         graph = new Graph();
         mainPanel.add(graph);
         mainPanel.add(settings,BorderLayout.EAST);
-        mainPanel.add(function,BorderLayout.SOUTH);
 
         super.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         super.getContentPane().add(mainPanel);
@@ -187,8 +236,88 @@ public class Main extends JFrame{
     }
 
     public static void main(String[] args) {
-        //Create a new object
-        new Main();
+        frame = new Main();
     }
 
+    public void modal(JFrame frame){
+        JDialog jDialog = new JDialog(frame , "About Us", true);
+        JPanel container = new JPanel();
+        container.setLayout(new BoxLayout(container, BoxLayout.X_AXIS));
+        JPanel devs = new JPanel();
+        devs.setLayout(new BoxLayout(devs, BoxLayout.Y_AXIS));
+
+        JPanel kntu = new JPanel();
+        class OpenUrlAction1 implements ActionListener {
+            @Override public void actionPerformed(ActionEvent e) {
+                open(github);
+            }
+        }
+        class OpenUrlAction2 implements ActionListener {
+            @Override public void actionPerformed(ActionEvent e) {
+                open(drHA);
+            }
+        }
+        JLabel dev = new JLabel("Developed By");
+        JLabel muhrez = new JLabel("Muhammad Reza Kolagar");
+        JLabel drHAL = new JLabel("Under Supervision of Dr.Hadi Aliakbarian");
+        JPanel parsa = new JPanel();
+        JPanel drHA = new JPanel();
+        JButton parsaB = new JButton();
+        JButton drHAB = new JButton();
+        parsa.setMaximumSize(new Dimension((int)parsaB.getPreferredSize().getWidth()+56
+                ,(int)parsaB.getPreferredSize().getHeight()));
+        parsa.add(parsaB);
+        drHA.add(drHAL);drHA.add(drHAB);
+        parsaB.setText("<HTML><p1 color=\"#808080\"><U>Parsa Samadnejad</U></p1>"
+                + "</HTML>");
+        parsaB.setHorizontalAlignment(SwingConstants.LEFT);
+        parsaB.setBorderPainted(false);
+        parsaB.setOpaque(false);
+        parsaB.setBackground(Color.WHITE);
+        parsaB.setToolTipText(github.toString());
+        parsaB.addActionListener(new OpenUrlAction1());
+        drHAB.setText("<HTML><p1 color=\"#808080\"><U>website</U></p1>"
+                + "</HTML>");
+        drHAB.setHorizontalAlignment(SwingConstants.LEFT);
+        drHAB.setBorderPainted(false);
+        drHAB.setOpaque(false);
+        drHAB.setBackground(Color.WHITE);
+        drHAB.setToolTipText(this.drHA.toString());
+        drHAB.addActionListener(new OpenUrlAction2());
+
+        parsa.setAlignmentX(Component.LEFT_ALIGNMENT);
+        muhrez.setAlignmentX(Component.LEFT_ALIGNMENT);
+        drHA.setAlignmentX(Component.LEFT_ALIGNMENT);
+        dev.setBorder(BorderFactory.createEmptyBorder(10,20,0,0));
+        parsa.setBorder(BorderFactory.createEmptyBorder(0,20,0,0));
+        muhrez.setBorder(BorderFactory.createEmptyBorder(0,20,0,0));
+        drHA.setBorder(BorderFactory.createEmptyBorder(100,0,0,0));
+        devs.add(dev);
+        devs.add(parsa);
+        devs.add(muhrez);
+        devs.add(drHA);
+        try {
+            Image myImage = ImageIO.read(new File("resources/ode/logo.png"));
+            myImage = myImage.getScaledInstance(250, 250, Image.SCALE_AREA_AVERAGING);
+            JLabel imageLabel = new JLabel(new ImageIcon(myImage));
+            kntu.add(imageLabel);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+        container.add(devs);
+        container.add(kntu);
+        jDialog.add(container);
+        jDialog.setSize(700,300);
+        jDialog.setResizable(false);
+        jDialog.setLocationRelativeTo(null);
+        jDialog.setVisible(true);
+    }
+
+    private static void open(URI uri) {
+        if (Desktop.isDesktopSupported()) {
+            try {
+                Desktop.getDesktop().browse(uri);
+            } catch (Exception e) { /* TODO: error handling */ }
+        } else { /* TODO: error handling */ }
+    }
 }
