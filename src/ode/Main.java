@@ -80,7 +80,9 @@ public class Main extends JFrame{
     JLabel exp = new JLabel("e^");
     JLabel plus = new JLabel("+");
 
-    JButton draw = new JButton("Draw");
+    JButton clear = new JButton("clear");
+    JButton drawEuler = new JButton("Draw Euler");
+    JButton drawRunge = new JButton("Draw RungeKutta");
 
     public Main() {
         super("Euler Runge-Kutta");
@@ -103,6 +105,7 @@ public class Main extends JFrame{
         JPanel scY = new JPanel();
         JPanel cost = new JPanel();
         JPanel eExp = new JPanel();
+        JPanel buttons = new JPanel();
         name.setBackground(Color.WHITE);
         setXY.setBackground(Color.WHITE);
         setH.setBackground(Color.WHITE);
@@ -146,6 +149,7 @@ public class Main extends JFrame{
         setXY.add(y);setXY.add(inputY);
         setH.add(h);setH.add(inputH);
         name.add(euler);name.add(runge);
+        buttons.add(drawRunge);buttons.add(drawEuler);buttons.add(clear);
 
         euler.setForeground(Color.BLUE);
         runge.setForeground(Color.RED);
@@ -164,7 +168,7 @@ public class Main extends JFrame{
         settings.add(scX);
         settings.add(scY);
         settings.add(cost);
-        settings.add(draw);
+        settings.add(buttons);
 
         function.add(yP);function.add(aL);
         polyX.add(aT);polyX.add(bL);
@@ -188,9 +192,20 @@ public class Main extends JFrame{
         scY.setMaximumSize(scY.getPreferredSize());
 //        cost.setMaximumSize(function.getPreferredSize());
 
-        draw.addActionListener(e -> {
+        drawRunge.addActionListener(e -> {
             setSettings();
             setFunction();
+            graph.rungeKutta();
+            graph.repaint();
+        });
+        drawEuler.addActionListener(e -> {
+            setSettings();
+            setFunction();
+            graph.euler();
+            graph.repaint();
+        });
+        clear.addActionListener(e -> {
+            graph.clearShapes();
             graph.repaint();
         });
 
