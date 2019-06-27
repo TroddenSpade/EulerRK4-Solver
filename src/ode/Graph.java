@@ -8,6 +8,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.util.ArrayList;
 import javax.swing.JComponent;
 
 public class Graph extends JComponent {
@@ -19,6 +20,8 @@ public class Graph extends JComponent {
             p = 0, q = 0, o=0, r=0;
 
     Graphics2D g2d;
+
+    ArrayList<Shape> shapes = new ArrayList<>();
 
     public Graph() {
         super();
@@ -66,17 +69,18 @@ public class Graph extends JComponent {
             g2d.drawString("" + i2, width / 2 + 5, i - 5);
         g2d.setStroke(new BasicStroke(2));
 
-        euler(g2d);
-        rungeKutta(g2d);
+        for(Shape shape : shapes){
+            shape.draw(g2d);
+        }
     }
 
 
-    public void euler(Graphics2D g2d) {
-        g2d.setColor(Color.BLUE);
+    public void euler() {
         double x0 = this.x0,y = this.y, h = this.hx;
         double y2 = this.y;
 
         Point prev = null;
+        ArrayList<Point> frontPoints = new ArrayList<>();
         int mw = super.getWidth() / 2;
         int mh = super.getHeight() / 2;
 
@@ -84,26 +88,21 @@ public class Graph extends JComponent {
         for (double a = x0; a <= 12; a += h) {
             int a2 = (int) (a * unit + mw);
             int b2 = (int) (-y * unit + mh);
-            if (prev != null) {
-                g2d.drawLine(prev.x, prev.y, a2, b2);
-            }
-            prev = new Point(a2, b2);
+            frontPoints.add(new Point(a2,b2));
             y = y + h * func(a, y);
         }
         prev = null;
+        ArrayList<Point> backPoints = new ArrayList<>();
         for (double a = x0; a >= -12; a -= h) {
             int a2 = (int) (a * unit + mw);
             int b2 = (int) (-y2 * unit + mh);
-            if (prev != null) {
-                g2d.drawLine(prev.x, prev.y, a2, b2);
-            }
-            prev = new Point(a2, b2);
+            backPoints.add(new Point(a2,b2));
             y2 = y2 - h * func(a, y2);
         }
+        shapes.add(new Shape(frontPoints,backPoints));
     }
 
-    public void rungeKutta(Graphics2D g2d) {
-        g2d.setColor(Color.RED);
+    public void rungeKutta() {
         double x0 = this.x0, y = this.y, h = this.hx;
         double y2 = this.y;
 
@@ -114,36 +113,32 @@ public class Graph extends JComponent {
         double k1, k2, k3, k4;
 
         if (h == 0) return;
+        ArrayList<Point> frontPoints = new ArrayList<>();
         for (double i = x0; i <= 12; i += h) {
             int a2 = (int) (i * unit + mw);
             int b2 = (int) (-y * unit + mh);
-            if (prev != null) {
-                g2d.drawLine(prev.x, prev.y, a2, b2);
-            }
-            prev = new Point(a2, b2);
-
+            frontPoints.add(new Point(a2,b2));
             k1 = h * (func(i, y));
             k2 = h * (func(i + 0.5 * h, y + 0.5 * k1));
             k3 = h * (func(i + 0.5 * h, y + 0.5 * k2));
             k4 = h * (func(i + h, y + k3));
             y = y + (1.0 / 6.0) * (k1 + 2 * k2 + 2 * k3 + k4);
         }
-        prev = null;
 
+        prev = null;
+        ArrayList<Point> backPoints = new ArrayList<>();
         for (double i = x0; i >= -12; i -= h) {
             int a2 = (int) (i * unit + mw);
             int b2 = (int) (-y2 * unit + mh);
-            if (prev != null) {
-                g2d.drawLine(prev.x, prev.y, a2, b2);
-            }
-            prev = new Point(a2, b2);
-
+            backPoints.add(new Point(a2,b2));
             k1 = h * (func(i, y2));
             k2 = h * (func(i + 0.5 * h, y2 + 0.5 * k1));
             k3 = h * (func(i + 0.5 * h, y2 + 0.5 * k2));
             k4 = h * (func(i + h, y2 + k3));
             y2 = y2 - (1.0 / 6.0) * (k1 + 2 * k2 + 2 * k3 + k4);
         }
+        shapes.add(new Shape(frontPoints,backPoints));
+
     }
 
     public void setNums(double a, double b, double c, double d,
@@ -182,4 +177,7 @@ public class Graph extends JComponent {
                 + o*Math.pow(Math.E,r) + c;
     }
 
+    public void clearShapes() {
+        this.shapes.clear();
+    }
 }
