@@ -2,9 +2,15 @@ package ode;
 
 import java.awt.*;
 import javax.imageio.ImageIO;
+import javax.jnlp.FileContents;
+import javax.jnlp.FileOpenService;
+import javax.jnlp.FileSaveService;
+import javax.jnlp.ServiceManager;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -21,21 +27,20 @@ public class Main extends JFrame{
 
     JMenuItem about = new JMenuItem(new AbstractAction("About Us") {
         public void actionPerformed(ActionEvent e) {
-            modal(frame);
+            helpModal(frame);
         }
     });
 
     JMenuItem save = new JMenuItem(new AbstractAction("Save") {
         public void actionPerformed(ActionEvent e) {
-
+            saveModal(frame);
         }
     });
 
-    JLabel euler = new JLabel("Euler");
-    JLabel runge = new JLabel("RungeKutta");
-    JLabel x0 = new JLabel("x0 :");
+    JLabel euler = new JLabel("Euler-RK4 Solver");
+    JLabel x0 = new JLabel("<html>X<sub>0</sub>:</html>");
     JTextField inputX0 = new JTextField(5);
-    JLabel y = new JLabel("y(x0) :");
+    JLabel y = new JLabel("<html>Y(X<sub>0</sub>):</html>");
     JTextField inputY = new JTextField(5);
     JLabel h = new JLabel("h :");
     JTextField inputH = new JTextField(5);
@@ -79,13 +84,20 @@ public class Main extends JFrame{
     JLabel lastl = new JLabel("Y)");
     JLabel exp = new JLabel("e^");
     JLabel plus = new JLabel("+");
+    JLabel func = new JLabel(
+            "<html><h2> <i>Y</i>' = A<i>x</i><sup>2</sup> + B<i>x</i> + D<i>y</i><sup>2</sup> + E<i>y</i> + "
+            +"F<i>x</i><sup>p</sup><i>y</i><sup>q</sup> + "
+            +"G.sin(H<i>x</i>) + I.sin(J<i>y</i>) + Kcos(L<i>x</i>) + Mcos(N<i>y</i>) + "
+            +"C"
+            +"</h2></html>");
 
-    JButton clear = new JButton("clear");
+    JButton clear = new JButton("clear Screen");
+    JButton clearF = new JButton("clear TextFields");
     JButton drawEuler = new JButton("Draw Euler");
-    JButton drawRunge = new JButton("Draw RungeKutta");
+    JButton drawRunge = new JButton("Draw RK4");
 
     public Main() {
-        super("Euler Runge-Kutta");
+        super("Euler-RK4 Solver");
         try {
             github = new URI("https://github.com/TroddenSpade");
             drHA = new URI("https://wp.kntu.ac.ir/aliakbarian/");
@@ -105,7 +117,9 @@ public class Main extends JFrame{
         JPanel scY = new JPanel();
         JPanel cost = new JPanel();
         JPanel eExp = new JPanel();
+        JPanel shapesInfo = new JPanel();
         JPanel buttons = new JPanel();
+        JPanel funcP = new JPanel();
         name.setBackground(Color.WHITE);
         setXY.setBackground(Color.WHITE);
         setH.setBackground(Color.WHITE);
@@ -118,6 +132,10 @@ public class Main extends JFrame{
         scY.setBackground(Color.WHITE);
         cost.setBackground(Color.WHITE);
         eExp.setBackground(Color.WHITE);
+        shapesInfo.setBackground(Color.WHITE);
+        buttons.setBackground(Color.WHITE);
+        funcP.setBackground(Color.WHITE);
+        func.setForeground(Color.GRAY);
 
         more.setPreferredSize(new Dimension(50,30));
         file.setPreferredSize(new Dimension(50,30));
@@ -130,6 +148,8 @@ public class Main extends JFrame{
         menuBar.add(more);
         this.setJMenuBar(menuBar);
         settings.setLayout(new BoxLayout(settings, BoxLayout.Y_AXIS));
+        shapesInfo.setLayout(new BoxLayout(shapesInfo, BoxLayout.Y_AXIS));
+        shapesInfo.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
         settings.setPreferredSize(
                 new Dimension(
                         (int)Toolkit.getDefaultToolkit().getScreenSize().getWidth()/5,
@@ -138,25 +158,24 @@ public class Main extends JFrame{
         graph = new Graph();
         mainPanel.add(graph);
         mainPanel.add(settings,BorderLayout.EAST);
+        mainPanel.add(funcP,BorderLayout.SOUTH);
 
         super.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         super.getContentPane().add(mainPanel);
         super.pack();
         super.setVisible(true);
 
-
+        funcP.add(func);
         setXY.add(x0);setXY.add(inputX0);
         setXY.add(y);setXY.add(inputY);
         setH.add(h);setH.add(inputH);
-        name.add(euler);name.add(runge);
-        buttons.add(drawRunge);buttons.add(drawEuler);buttons.add(clear);
+        name.add(euler);
+        buttons.add(drawRunge);buttons.add(drawEuler);buttons.add(clear);buttons.add(clearF);
 
-        euler.setForeground(Color.BLUE);
-        runge.setForeground(Color.RED);
-        euler.setFont(new Font("TimesRoman", Font.BOLD, 32));
-        runge.setFont(new Font("TimesRoman", Font.BOLD, 32));
-        yP.setFont(new Font("TimesRoman", Font.ITALIC, 24));
-        aL.setFont(new Font("TimesRoman", Font.ITALIC, 24));
+        euler.setForeground(Color.GRAY);
+        euler.setFont(new Font("Boulder", Font.BOLD, 32));
+        yP.setFont(new Font("Boulder", Font.ITALIC, 24));
+        aL.setFont(new Font("Boulder", Font.ITALIC, 24));
 
         settings.add(name);
         settings.add(setXY);settings.add(setXY);settings.add(setH);
@@ -168,6 +187,7 @@ public class Main extends JFrame{
         settings.add(scX);
         settings.add(scY);
         settings.add(cost);
+        settings.add(shapesInfo);
         settings.add(buttons);
 
         function.add(yP);function.add(aL);
@@ -183,6 +203,7 @@ public class Main extends JFrame{
         scX.add(kT);scX.add(lL);scX.add(lT);scX.add(mL);
         scY.add(mT);scY.add(nL);scY.add(nT);scY.add(lastl);scY.add(cL);
 
+        setXY.setMaximumSize(setXY.getPreferredSize());
         function.setMaximumSize(function.getPreferredSize());
         polyX.setMaximumSize(polyX.getPreferredSize());
         polyY.setMaximumSize(polyY.getPreferredSize());
@@ -191,24 +212,38 @@ public class Main extends JFrame{
         scX.setMaximumSize(scX.getPreferredSize());
         scY.setMaximumSize(scY.getPreferredSize());
 //        cost.setMaximumSize(function.getPreferredSize());
+        shapesInfo.setPreferredSize(
+                new Dimension(
+                (int)Toolkit.getDefaultToolkit().getScreenSize().getWidth()/5,
+                (int)function.getPreferredSize().getHeight()*5));
 
         drawRunge.addActionListener(e -> {
             setSettings();
             setFunction();
-            graph.rungeKutta();
+            graph.rungeKutta(shapesInfo);
             graph.repaint();
+            shapesInfo.revalidate();
+            shapesInfo.repaint();
         });
         drawEuler.addActionListener(e -> {
             setSettings();
             setFunction();
-            graph.euler();
+            graph.euler(shapesInfo);
             graph.repaint();
+            shapesInfo.revalidate();
+            shapesInfo.repaint();
         });
         clear.addActionListener(e -> {
             graph.clearShapes();
+            shapesInfo.removeAll();
+            shapesInfo.revalidate();
+            shapesInfo.repaint();
+            Shape.reset();
             graph.repaint();
         });
+        clearF.addActionListener(e ->{
 
+        });
     }
 
     public void setFunction(){
@@ -254,7 +289,7 @@ public class Main extends JFrame{
         frame = new Main();
     }
 
-    public void modal(JFrame frame){
+    public void helpModal(JFrame frame){
         JDialog jDialog = new JDialog(frame , "About Us", true);
         JPanel container = new JPanel();
         container.setLayout(new BoxLayout(container, BoxLayout.X_AXIS));
@@ -274,6 +309,7 @@ public class Main extends JFrame{
         }
         JLabel dev = new JLabel("Developed By");
         JLabel muhrez = new JLabel("Muhammad Reza Kolagar");
+        muhrez.setForeground(Color.BLUE);
         JLabel drHAL = new JLabel("Under Supervision of Dr.Hadi Aliakbarian");
         JPanel parsa = new JPanel();
         JPanel drHA = new JPanel();
@@ -283,7 +319,7 @@ public class Main extends JFrame{
                 ,(int)parsaB.getPreferredSize().getHeight()));
         parsa.add(parsaB);
         drHA.add(drHAL);drHA.add(drHAB);
-        parsaB.setText("<HTML><p1 color=\"#808080\"><U>Parsa Samadnejad</U></p1>"
+        parsaB.setText("<HTML><p1 color=\"#8B008B\"><U>Parsa Samadnejad</U></p1>"
                 + "</HTML>");
         parsaB.setHorizontalAlignment(SwingConstants.LEFT);
         parsaB.setBorderPainted(false);
@@ -291,7 +327,7 @@ public class Main extends JFrame{
         parsaB.setBackground(Color.WHITE);
         parsaB.setToolTipText(github.toString());
         parsaB.addActionListener(new OpenUrlAction1());
-        drHAB.setText("<HTML><p1 color=\"#808080\"><U>website</U></p1>"
+        drHAB.setText("<HTML><p1 color=\"#808080\"><U>WebSite</U></p1>"
                 + "</HTML>");
         drHAB.setHorizontalAlignment(SwingConstants.LEFT);
         drHAB.setBorderPainted(false);
@@ -328,11 +364,37 @@ public class Main extends JFrame{
         jDialog.setVisible(true);
     }
 
+    public void saveModal(JFrame frame){
+        JDialog jDialog = new JDialog(frame , "Save", true);
+        JButton save = new JButton("Save");
+        JPanel container = new JPanel();
+        container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
+        JFileChooser f = new JFileChooser();
+        save.addActionListener(e-> {
+            JFileChooser fileChooser = new JFileChooser();
+            if (fileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+                File file = fileChooser.getSelectedFile();
+
+//                ImageIO.write(buff, "Png", file);
+
+            }
+        });
+        container.add(save);
+        jDialog.add(container);
+        jDialog.setSize(300,200);
+        jDialog.setResizable(false);
+//        jDialog.setLocationRelativeTo(null);
+        jDialog.setVisible(true);
+    }
+
     private static void open(URI uri) {
         if (Desktop.isDesktopSupported()) {
             try {
                 Desktop.getDesktop().browse(uri);
-            } catch (Exception e) { /* TODO: error handling */ }
-        } else { /* TODO: error handling */ }
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        } else;
+
     }
 }
