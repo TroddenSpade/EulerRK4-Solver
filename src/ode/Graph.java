@@ -1,15 +1,12 @@
 
 package ode;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Toolkit;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
-import javax.swing.JComponent;
+import javax.imageio.ImageIO;
+import javax.swing.*;
 
 public class Graph extends JComponent {
 
@@ -31,10 +28,11 @@ public class Graph extends JComponent {
 
     @Override
     protected void paintComponent(Graphics graphics) {
-        g2d = (Graphics2D) graphics;
-        g2d.setBackground(Color.white);
         int width = super.getWidth();
         int height = super.getHeight();
+
+        g2d = (Graphics2D) graphics;
+        g2d.setBackground(Color.white);
         g2d.clearRect(0, 0, width, height);
         g2d.setStroke(new BasicStroke(2));
         g2d.setColor(Color.GRAY);
@@ -45,6 +43,18 @@ public class Graph extends JComponent {
                 BasicStroke.CAP_BUTT,
                 BasicStroke.JOIN_MITER,
                 10, new float[]{10, 2}, 0));
+        try {
+            Image myImage = ImageIO.read(new File("resources/ode/kntu.png"));
+            myImage = myImage.getScaledInstance(200, 200, Image.SCALE_AREA_AVERAGING);
+            AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f);
+            g2d.setComposite(composite);
+            g2d.drawImage(myImage, width/2-100, height/2-100,null);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+
+        AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f);
+        g2d.setComposite(composite);
         g2d.setColor(Color.LIGHT_GRAY);
         for (int i = width / 2 + unit; i < width; i += unit)
             g2d.drawLine(i, 0, i, height);
@@ -57,7 +67,6 @@ public class Graph extends JComponent {
 
         for (int i = height / 2 - unit; i > 0; i -= unit)
             g2d.drawLine(0, i, width, i);
-
 
         for (int i = width / 2, i2 = 0; i < width; i += unit, i2++)
             g2d.drawString(i2 + "", i + 5, height / 2 - 5);
@@ -75,7 +84,7 @@ public class Graph extends JComponent {
     }
 
 
-    public void euler() {
+    public void euler(JPanel shapesInfo) {
         double x0 = this.x0,y = this.y, h = this.hx;
         double y2 = this.y;
 
@@ -99,10 +108,11 @@ public class Graph extends JComponent {
             backPoints.add(new Point(a2,b2));
             y2 = y2 - h * func(a, y2);
         }
-        shapes.add(new Shape(frontPoints,backPoints));
+        shapes.add(new Shape(frontPoints,backPoints,0,shapesInfo,h));
+
     }
 
-    public void rungeKutta() {
+    public void rungeKutta(JPanel shapesInfo) {
         double x0 = this.x0, y = this.y, h = this.hx;
         double y2 = this.y;
 
@@ -137,8 +147,7 @@ public class Graph extends JComponent {
             k4 = h * (func(i + h, y2 + k3));
             y2 = y2 - (1.0 / 6.0) * (k1 + 2 * k2 + 2 * k3 + k4);
         }
-        shapes.add(new Shape(frontPoints,backPoints));
-
+        shapes.add(new Shape(frontPoints,backPoints,1,shapesInfo,h));
     }
 
     public void setNums(double a, double b, double c, double d,
@@ -180,4 +189,37 @@ public class Graph extends JComponent {
     public void clearShapes() {
         this.shapes.clear();
     }
+
+    public BufferedImage getBI(){
+        g2d.dispose();
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+//        return new BufferedImage(
+//                (int) (screenSize.getWidth() * 5 / 6),
+//                (int) (screenSize.getHeight());
+        return null;
+    }
+}
+
+class ImagePanel extends JPanel {
+
+    private Image img;
+
+    public ImagePanel(String img) {
+        this(new ImageIcon(img).getImage());
+    }
+
+    public ImagePanel(Image img) {
+        this.img = img;
+        Dimension size = new Dimension(img.getWidth(null), img.getHeight(null));
+        setPreferredSize(size);
+        setMinimumSize(size);
+        setMaximumSize(size);
+        setSize(size);
+        setLayout(null);
+    }
+
+    public void paintComponent(Graphics g) {
+        g.drawImage(img, 0, 0, null);
+    }
+
 }
