@@ -98,7 +98,7 @@ public class Graph extends JComponent {
         int mh = super.getHeight() / 2;
 
         if (h == 0) return;
-        for (double a = x0; a <= 12; a += h) {
+        for (double a = x0; a <= 15; a += h) {
             int a2 = (int) (a * unit + mw);
             int b2 = (int) (-y * unit + mh);
             frontPoints.add(new Point(a2,b2));
@@ -106,7 +106,7 @@ public class Graph extends JComponent {
         }
         prev = null;
         ArrayList<Point> backPoints = new ArrayList<>();
-        for (double a = x0; a >= -12; a -= h) {
+        for (double a = x0; a >= -15; a -= h) {
             int a2 = (int) (a * unit + mw);
             int b2 = (int) (-y2 * unit + mh);
             backPoints.add(new Point(a2,b2));
@@ -128,7 +128,7 @@ public class Graph extends JComponent {
 
         if (h == 0) return;
         ArrayList<Point> frontPoints = new ArrayList<>();
-        for (double i = x0; i <= 12; i += h) {
+        for (double i = x0; i <= 15; i += h) {
             int a2 = (int) (i * unit + mw);
             int b2 = (int) (-y * unit + mh);
             frontPoints.add(new Point(a2,b2));
@@ -141,7 +141,7 @@ public class Graph extends JComponent {
 
         prev = null;
         ArrayList<Point> backPoints = new ArrayList<>();
-        for (double i = x0; i >= -12; i -= h) {
+        for (double i = x0; i >= -15; i -= h) {
             int a2 = (int) (i * unit + mw);
             int b2 = (int) (-y2 * unit + mh);
             backPoints.add(new Point(a2,b2));
