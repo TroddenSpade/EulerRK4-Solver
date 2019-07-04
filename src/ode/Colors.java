@@ -5,12 +5,12 @@ import java.awt.*;
 public enum Colors{
     RED(Color.RED),
     BLUE(Color.BLUE),
-    GREEN(Color.GREEN),
-    BLACK(Color.BLACK),
-    CYAN(Color.CYAN),
-    PINK(Color.PINK),
+    MAGENTA(Color.MAGENTA),
     ORANGE(Color.ORANGE),
-    MAGENTA(Color.MAGENTA);
+    PINK(Color.PINK),
+    CYAN(Color.CYAN),
+    GREEN(Color.GREEN),
+    BLACK(Color.BLACK);
 
     private Color color;
 

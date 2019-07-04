@@ -19,30 +19,26 @@ public class Main extends JFrame{
     static JFrame frame;
     private URI github;
     private URI drHA;
+    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
     Graph graph;
+    Graph dif = new Graph();
     JMenuBar menuBar = new JMenuBar();
     JMenu file = new JMenu("File");
     JMenu more = new JMenu("Help");
-
-    JMenuItem about = new JMenuItem(new AbstractAction("About Us") {
-        public void actionPerformed(ActionEvent e) {
-            helpModal(frame);
-        }
-    });
-
-    JMenuItem save = new JMenuItem(new AbstractAction("Save") {
-        public void actionPerformed(ActionEvent e) {
-            saveModal(frame);
-        }
-    });
+    JMenu space = new JMenu("<html><p style='margin-left:"+
+            ((int) (screenSize.getWidth() * 5 / 6)/2-220)+
+            "'><p/>");
+    JMenuItem graphMenu;
+    JMenuItem diffMenu;
 
     JLabel euler = new JLabel("Euler-RK4 Solver");
+    JLabel initial = new JLabel("Initial Values");
     JLabel x0 = new JLabel("<html>X<sub>0</sub>:</html>");
     JTextField inputX0 = new JTextField(5);
     JLabel y = new JLabel("<html>Y(X<sub>0</sub>):</html>");
     JTextField inputY = new JTextField(5);
-    JLabel h = new JLabel("h :");
+    JLabel h = new JLabel("Step  h :");
     JTextField inputH = new JTextField(5);
 
     JTextField aT = new JTextField(2);
@@ -98,14 +94,52 @@ public class Main extends JFrame{
 
     public Main() {
         super("Euler-RK4 Solver");
+        JPanel mainPanel = new JPanel(new BorderLayout());
         try {
             github = new URI("https://github.com/TroddenSpade");
             drHA = new URI("https://wp.kntu.ac.ir/aliakbarian/");
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
-        JPanel mainPanel = new JPanel(new BorderLayout());
+        graphMenu = new JMenuItem(new AbstractAction("Graph") {
+            public void actionPerformed(ActionEvent e) {
+                graphMenu.setBackground(Color.cyan);
+                diffMenu.setBackground(Color.white);
+                mainPanel.remove(dif);
+                mainPanel.add(graph);
+                mainPanel.revalidate();
+                mainPanel.repaint();
+            }
+        });
+        graphMenu.setBackground(Color.cyan);
+
+        diffMenu = new JMenuItem(new AbstractAction("Diff") {
+            public void actionPerformed(ActionEvent e) {
+                diffMenu.setBackground(Color.cyan);
+                graphMenu.setBackground(Color.white);
+                mainPanel.remove(graph);
+                mainPanel.add(dif);
+                mainPanel.revalidate();
+                mainPanel.repaint();
+            }
+        });
+
+        JMenuItem about = new JMenuItem(new AbstractAction("About Us") {
+            public void actionPerformed(ActionEvent e) {
+                helpModal(frame);
+            }
+        });
+
+        JMenuItem save = new JMenuItem(new AbstractAction("Save") {
+            public void actionPerformed(ActionEvent e) {
+                saveModal(frame);
+            }
+        });
+        space.setOpaque(false);
+        graphMenu.setMaximumSize(new Dimension(80,30));
+        diffMenu.setMaximumSize(new Dimension(80,30));
         JPanel name = new JPanel();
+        JPanel initialvalues = new JPanel();
         JPanel setXY = new JPanel();
         JPanel setH = new JPanel();
         JPanel settings = new JPanel();
@@ -121,6 +155,7 @@ public class Main extends JFrame{
         JPanel buttons = new JPanel();
         JPanel funcP = new JPanel();
         name.setBackground(Color.WHITE);
+        initialvalues.setBackground(Color.WHITE);
         setXY.setBackground(Color.WHITE);
         setH.setBackground(Color.WHITE);
         settings.setBackground(Color.WHITE);
@@ -146,6 +181,9 @@ public class Main extends JFrame{
         file.add(save);
         menuBar.add(file);
         menuBar.add(more);
+        menuBar.add(space);
+        menuBar.add(graphMenu);
+        menuBar.add(diffMenu);
         this.setJMenuBar(menuBar);
         settings.setLayout(new BoxLayout(settings, BoxLayout.Y_AXIS));
         shapesInfo.setLayout(new BoxLayout(shapesInfo, BoxLayout.Y_AXIS));
@@ -156,7 +194,7 @@ public class Main extends JFrame{
                         (int)Toolkit.getDefaultToolkit().getScreenSize().getHeight()));
 
         graph = new Graph();
-        mainPanel.add(graph);
+        mainPanel.add(dif);
         mainPanel.add(settings,BorderLayout.EAST);
         mainPanel.add(funcP,BorderLayout.SOUTH);
 
@@ -166,6 +204,7 @@ public class Main extends JFrame{
         super.setVisible(true);
 
         funcP.add(func);
+        initialvalues.add(initial);
         setXY.add(x0);setXY.add(inputX0);
         setXY.add(y);setXY.add(inputY);
         setH.add(h);setH.add(inputH);
@@ -173,11 +212,12 @@ public class Main extends JFrame{
         buttons.add(drawRunge);buttons.add(drawEuler);buttons.add(clear);buttons.add(clearF);
 
         euler.setForeground(Color.GRAY);
-        euler.setFont(new Font("Boulder", Font.BOLD, 32));
+        euler.setFont(new Font("Boulder", Font.BOLD, 30));
         yP.setFont(new Font("Boulder", Font.ITALIC, 24));
         aL.setFont(new Font("Boulder", Font.ITALIC, 24));
 
         settings.add(name);
+        settings.add(initialvalues);
         settings.add(setXY);settings.add(setXY);settings.add(setH);
         settings.add(function);
         settings.add(polyX);
@@ -203,6 +243,7 @@ public class Main extends JFrame{
         scX.add(kT);scX.add(lL);scX.add(lT);scX.add(mL);
         scY.add(mT);scY.add(nL);scY.add(nT);scY.add(lastl);scY.add(cL);
 
+        initialvalues.setMaximumSize(initialvalues.getPreferredSize());
         setXY.setMaximumSize(setXY.getPreferredSize());
         function.setMaximumSize(function.getPreferredSize());
         polyX.setMaximumSize(polyX.getPreferredSize());
@@ -222,6 +263,8 @@ public class Main extends JFrame{
             setFunction();
             graph.rungeKutta(shapesInfo);
             graph.repaint();
+            dif.convert(graph.getShapes());
+            dif.repaint();
             shapesInfo.revalidate();
             shapesInfo.repaint();
         });
@@ -230,20 +273,36 @@ public class Main extends JFrame{
             setFunction();
             graph.euler(shapesInfo);
             graph.repaint();
+            dif.convert(graph.getShapes());
+            dif.repaint();
             shapesInfo.revalidate();
             shapesInfo.repaint();
         });
         clear.addActionListener(e -> {
             graph.clearShapes();
+            dif.clearShapes();
             shapesInfo.removeAll();
             shapesInfo.revalidate();
             shapesInfo.repaint();
             Shape.reset();
+            dif.repaint();
             graph.repaint();
         });
         clearF.addActionListener(e ->{
 
         });
+        try {
+            Thread.sleep(500);
+            mainPanel.remove(graph);
+            mainPanel.add(dif);
+            mainPanel.revalidate();
+            mainPanel.repaint();
+            mainPanel.remove(dif);
+            mainPanel.add(graph);
+            mainPanel.revalidate();
+            mainPanel.repaint();
+        }catch (Exception e){}
+        this.setResizable(false);
     }
 
     public void setFunction(){
@@ -365,26 +424,13 @@ public class Main extends JFrame{
     }
 
     public void saveModal(JFrame frame){
-        JDialog jDialog = new JDialog(frame , "Save", true);
-        JButton save = new JButton("Save");
-        JPanel container = new JPanel();
-        container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
-        JFileChooser f = new JFileChooser();
-        save.addActionListener(e-> {
-            JFileChooser fileChooser = new JFileChooser();
-            if (fileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
-                File file = fileChooser.getSelectedFile();
+        JFileChooser fileChooser = new JFileChooser();
+        if (fileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
 
 //                ImageIO.write(buff, "Png", file);
 
-            }
-        });
-        container.add(save);
-        jDialog.add(container);
-        jDialog.setSize(300,200);
-        jDialog.setResizable(false);
-//        jDialog.setLocationRelativeTo(null);
-        jDialog.setVisible(true);
+        }
     }
 
     private static void open(URI uri) {
