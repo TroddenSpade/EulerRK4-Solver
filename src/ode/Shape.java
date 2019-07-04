@@ -11,7 +11,6 @@ public class Shape {
     private int noColor;
 
     Shape(ArrayList<Point> frontPoints,ArrayList<Point> backPoints,int type,JPanel shapesInfo,double h){
-        if (no>3)   return;
         this.noColor = this.no;
         this.frontPoints = frontPoints;
         this.backPoints = backPoints;
@@ -31,7 +30,6 @@ public class Shape {
     }
 
     Shape(ArrayList<Point> frontPoints,ArrayList<Point> backPoints){
-//        if (no>7)   return;
         this.noColor = this.no;
         this.frontPoints = frontPoints;
         this.backPoints = backPoints;
@@ -82,6 +80,10 @@ public class Shape {
             return (next.getY()-prev.getY())/(next.getX()-prev.getX())*(x-prev.getX()) + prev.getY();
         }
         return 0;
+    }
+
+    public static int getNo() {
+        return no;
     }
 
     public static void reset(){
