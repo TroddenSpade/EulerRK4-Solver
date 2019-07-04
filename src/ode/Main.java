@@ -57,33 +57,32 @@ public class Main extends JFrame{
     JTextField nT = new JTextField(2);
     JTextField pT = new JTextField(2);
     JTextField qT = new JTextField(2);
-    JTextField eX = new JTextField(2);
-    JTextField eXN = new JTextField(2);
+    JTextField oT = new JTextField(2);
+    JTextField rT = new JTextField(2);
 
-    JLabel yP = new JLabel("Y' = ");
-    JLabel aL = new JLabel("F(x,y) =");
-    JLabel bL = new JLabel("X^2 +");
-    JLabel dL = new JLabel("X +");
-    JLabel cL = new JLabel(" +");
-    JLabel eL = new JLabel("Y^2 +");
-    JLabel fL = new JLabel("Y +");
-    JLabel pL = new JLabel("X^");
-    JLabel qL = new JLabel(".Y^");
-    JLabel gL = new JLabel("+");
-    JLabel hL = new JLabel("Sin(");
-    JLabel iL = new JLabel("X) +");
-    JLabel jL = new JLabel("Sin(");
-    JLabel kL = new JLabel("Y) +");
-    JLabel lL = new JLabel("Cos(");
-    JLabel mL = new JLabel("X) +");
-    JLabel nL = new JLabel("Cos(");
-    JLabel lastl = new JLabel("Y)");
-    JLabel exp = new JLabel("e^");
-    JLabel plus = new JLabel("+");
+    JLabel aL = new JLabel("A:");
+    JLabel bL = new JLabel("B:");
+    JLabel dL = new JLabel("D:");
+    JLabel cL = new JLabel("C:");
+    JLabel eL = new JLabel("E:");
+    JLabel fL = new JLabel("F:");
+    JLabel pL = new JLabel("p:");
+    JLabel qL = new JLabel("q:");
+    JLabel gL = new JLabel("G:");
+    JLabel hL = new JLabel("H:");
+    JLabel iL = new JLabel("I:");
+    JLabel jL = new JLabel("J:");
+    JLabel kL = new JLabel("K:");
+    JLabel lL = new JLabel("L:");
+    JLabel mL = new JLabel("M:");
+    JLabel nL = new JLabel("N:");
+    JLabel oL = new JLabel("O:");
+    JLabel rL = new JLabel("r:");
     JLabel func = new JLabel(
             "<html><h2> <i>Y</i>' = A<i>x</i><sup>2</sup> + B<i>x</i> + D<i>y</i><sup>2</sup> + E<i>y</i> + "
             +"F<i>x</i><sup>p</sup><i>y</i><sup>q</sup> + "
             +"G.sin(H<i>x</i>) + I.sin(J<i>y</i>) + Kcos(L<i>x</i>) + Mcos(N<i>y</i>) + "
+            +"O<i>x</i><sup>r</sup> + "
             +"C"
             +"</h2></html>");
 
@@ -213,8 +212,6 @@ public class Main extends JFrame{
 
         euler.setForeground(Color.GRAY);
         euler.setFont(new Font("Boulder", Font.BOLD, 30));
-        yP.setFont(new Font("Boulder", Font.ITALIC, 24));
-        aL.setFont(new Font("Boulder", Font.ITALIC, 24));
 
         settings.add(name);
         settings.add(initialvalues);
@@ -230,18 +227,17 @@ public class Main extends JFrame{
         settings.add(shapesInfo);
         settings.add(buttons);
 
-        function.add(yP);function.add(aL);
-        polyX.add(aT);polyX.add(bL);
-        polyX.add(bT);polyX.add(dL);
-        polyY.add(dT);polyY.add(eL);
-        polyY.add(eT);polyY.add(fL);
-        eExp.add(eX);eExp.add(exp);eExp.add(eXN);eExp.add(plus);
-        cost.add(fT);
-        multi.add(cT);multi.add(pL);multi.add(pT);multi.add(qL);multi.add(qT);multi.add(gL);
-        scX.add(gT);scX.add(hL);scX.add(hT);scX.add(iL);
-        scY.add(iT);scY.add(jL);scY.add(jT);scY.add(kL);
-        scX.add(kT);scX.add(lL);scX.add(lT);scX.add(mL);
-        scY.add(mT);scY.add(nL);scY.add(nT);scY.add(lastl);scY.add(cL);
+        polyX.add(aL);polyX.add(aT);
+        polyX.add(bL);polyX.add(bT);
+        polyX.add(dL);polyX.add(dT);
+        polyX.add(eL);polyX.add(eT);
+        cost.add(oL);cost.add(oT);cost.add(rL);cost.add(rT);
+        cost.add(cL);cost.add(cT);
+        multi.add(fL);multi.add(fT);multi.add(pL);multi.add(pT);multi.add(qL);multi.add(qT);
+        scX.add(gL);scX.add(gT);scX.add(hL);scX.add(hT);
+        scX.add(iL);scX.add(iT);scX.add(jL);scX.add(jT);
+        scY.add(kL);scY.add(kT);scY.add(lL);scY.add(lT);
+        scY.add(mL);scY.add(mT);scY.add(nL);scY.add(nT);
 
         initialvalues.setMaximumSize(initialvalues.getPreferredSize());
         setXY.setMaximumSize(setXY.getPreferredSize());
@@ -259,6 +255,7 @@ public class Main extends JFrame{
                 (int)function.getPreferredSize().getHeight()*5));
 
         drawRunge.addActionListener(e -> {
+            if (Shape.getNo()>2)   return;
             setSettings();
             setFunction();
             graph.rungeKutta(shapesInfo);
@@ -269,6 +266,7 @@ public class Main extends JFrame{
             shapesInfo.repaint();
         });
         drawEuler.addActionListener(e -> {
+            if (Shape.getNo()>2)   return;
             setSettings();
             setFunction();
             graph.euler(shapesInfo);
@@ -289,7 +287,27 @@ public class Main extends JFrame{
             graph.repaint();
         });
         clearF.addActionListener(e ->{
-
+            inputX0.setText("");
+            inputH.setText("");
+            inputY.setText("");
+            aT.setText("");
+            bT.setText("");
+            cT.setText("");
+            dT.setText("");
+            eT.setText("");
+            fT.setText("");
+            gT.setText("");
+            hT.setText("");
+            iT.setText("");
+            jT.setText("");
+            kT.setText("");
+            lT.setText("");
+            mT.setText("");
+            nT.setText("");
+            oT.setText("");
+            pT.setText("");
+            qT.setText("");
+            rT.setText("");
         });
         try {
             Thread.sleep(500);
@@ -323,8 +341,8 @@ public class Main extends JFrame{
                 checkZero(nT.getText()),
                 checkZero(pT.getText()),
                 checkZero(qT.getText()),
-                checkZero(eXN.getText()),
-                checkZero(eX.getText()));
+                checkZero(oT.getText()),
+                checkZero(rT.getText()));
     }
 
     public void setSettings(){
