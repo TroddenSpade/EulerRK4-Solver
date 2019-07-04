@@ -26,6 +26,10 @@ public class Graph extends JComponent {
         super.setPreferredSize(new Dimension((int) (screenSize.getWidth() * 5 / 6), (int) (screenSize.getHeight() * 1)));
     }
 
+    public ArrayList<Shape> getShapes() {
+        return shapes;
+    }
+
     @Override
     protected void paintComponent(Graphics graphics) {
         int width = super.getWidth();
@@ -197,6 +201,29 @@ public class Graph extends JComponent {
 //                (int) (screenSize.getWidth() * 5 / 6),
 //                (int) (screenSize.getHeight());
         return null;
+    }
+
+    public void convert(ArrayList<Shape> shapes){
+        int mw = super.getWidth() / 2;
+        int mh = super.getHeight() /2;
+
+        if(shapes.size()>1){
+            ArrayList<Point> frontPoints = new ArrayList<>();
+            for (double a = 0; a < 12; a += 0.01) {
+                int a2 = (int) (a * unit + mw);
+                int b1 = (int) shapes.get(0).getPoint(a2);
+                int b2 = (int) shapes.get(1).getPoint(a2);
+                frontPoints.add(new Point(a2,mh-Math.abs(b1-b2)));
+            }
+            ArrayList<Point> backPoints = new ArrayList<>();
+            for (double a = 0; a > -12; a -= 0.01) {
+                int a2 = (int) (a * unit + mw);
+                int b1 = (int) shapes.get(0).getPoint(a2);
+                int b2 = (int) shapes.get(1).getPoint(a2);
+                backPoints.add(new Point(a2,mh-Math.abs(b1-b2)));
+            }
+            this.shapes.add(new Shape(frontPoints,backPoints));
+        }
     }
 }
 
