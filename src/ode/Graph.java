@@ -32,10 +32,16 @@ public class Graph extends JComponent {
 
     @Override
     protected void paintComponent(Graphics graphics) {
+
+
+        g2d = (Graphics2D) graphics;
+        draw(g2d);
+    }
+
+    public void draw(Graphics2D g2d){
         int width = super.getWidth();
         int height = super.getHeight();
 
-        g2d = (Graphics2D) graphics;
         g2d.setBackground(Color.white);
         g2d.clearRect(0, 0, width, height);
         g2d.setStroke(new BasicStroke(2));

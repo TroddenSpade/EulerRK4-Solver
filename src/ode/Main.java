@@ -7,11 +7,13 @@ import javax.jnlp.FileOpenService;
 import javax.jnlp.FileSaveService;
 import javax.jnlp.ServiceManager;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -443,11 +445,20 @@ public class Main extends JFrame{
 
     public void saveModal(JFrame frame){
         JFileChooser fileChooser = new JFileChooser();
+        FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                "JPG Images", "jpg");
+        fileChooser.setFileFilter(filter);
         if (fileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
-            File file = fileChooser.getSelectedFile();
+            File file = new File(fileChooser.getSelectedFile()+".jpg");
 
-//                ImageIO.write(buff, "Png", file);
-
+            BufferedImage image = new BufferedImage(graph.getWidth(), graph.getHeight(), BufferedImage.TYPE_INT_BGR);
+            Graphics2D graphic2D = image.createGraphics();
+            graph.draw(graphic2D);
+            try {
+                ImageIO.write(image,"jpg",file);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
