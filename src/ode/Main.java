@@ -114,7 +114,7 @@ public class Main extends JFrame{
         });
         graphMenu.setBackground(Color.cyan);
 
-        diffMenu = new JMenuItem(new AbstractAction("Diff") {
+        diffMenu = new JMenuItem(new AbstractAction("Difference") {
             public void actionPerformed(ActionEvent e) {
                 diffMenu.setBackground(Color.cyan);
                 graphMenu.setBackground(Color.white);
@@ -138,7 +138,7 @@ public class Main extends JFrame{
         });
         space.setOpaque(false);
         graphMenu.setMaximumSize(new Dimension(80,30));
-        diffMenu.setMaximumSize(new Dimension(80,30));
+        diffMenu.setMaximumSize(new Dimension(110,30));
         JPanel name = new JPanel();
         JPanel initialvalues = new JPanel();
         JPanel setXY = new JPanel();
