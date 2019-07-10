@@ -54,7 +54,7 @@ public class Graph extends JComponent {
                 BasicStroke.JOIN_MITER,
                 10, new float[]{10, 2}, 0));
         try {
-            Image myImage = ImageIO.read(new File("resources/ode/kntu.png"));
+            Image myImage = ImageIO.read(getClass().getResource("/kntu.png"));
             myImage = myImage.getScaledInstance(200, 200, Image.SCALE_AREA_AVERAGING);
             AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f);
             g2d.setComposite(composite);

@@ -2,17 +2,11 @@ package ode;
 
 import java.awt.*;
 import javax.imageio.ImageIO;
-import javax.jnlp.FileContents;
-import javax.jnlp.FileOpenService;
-import javax.jnlp.FileSaveService;
-import javax.jnlp.ServiceManager;
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -434,7 +428,7 @@ public class Main extends JFrame{
         devs.add(muhrez);
         devs.add(drHA);
         try {
-            Image myImage = ImageIO.read(new File("resources/ode/logo.png"));
+            Image myImage = ImageIO.read(getClass().getResource("/logo.png"));
             myImage = myImage.getScaledInstance(250, 250, Image.SCALE_AREA_AVERAGING);
             JLabel imageLabel = new JLabel(new ImageIcon(myImage));
             kntu.add(imageLabel);
