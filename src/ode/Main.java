@@ -7,6 +7,7 @@ import javax.jnlp.FileOpenService;
 import javax.jnlp.FileSaveService;
 import javax.jnlp.ServiceManager;
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -204,6 +205,9 @@ public class Main extends JFrame{
         super.pack();
         super.setVisible(true);
 
+        clear.setForeground(Color.GRAY);
+        clearF.setForeground(Color.GRAY);
+
         funcP.add(func);
         initialvalues.add(initial);
         setXY.add(x0);setXY.add(inputX0);
@@ -217,7 +221,7 @@ public class Main extends JFrame{
 
         settings.add(name);
         settings.add(initialvalues);
-        settings.add(setXY);settings.add(setXY);settings.add(setH);
+        settings.add(setXY);settings.add(setH);
         settings.add(function);
         settings.add(polyX);
         settings.add(polyY);
@@ -255,6 +259,9 @@ public class Main extends JFrame{
                 new Dimension(
                 (int)Toolkit.getDefaultToolkit().getScreenSize().getWidth()/5,
                 (int)function.getPreferredSize().getHeight()*5));
+
+//        clear.setBackground(Color.cyan);
+//        clearF.setBackground(Color.cyan);
 
         drawRunge.addActionListener(e -> {
             if (Shape.getNo()>2)   return;
