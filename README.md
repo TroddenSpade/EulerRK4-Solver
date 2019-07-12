@@ -8,7 +8,7 @@ Solving First Order Differential Equations using Euler and RK4 methods.
 Go to the [releases](https://github.com/TroddenSpade/EulerRK4-Solver/releases) to download jar file.
 
 ## User Guide
-English
+[English](https://github.com/TroddenSpade/EulerRK4-Solver/blob/master/docs/EulerRK4-eng.pdf)
 
 [Persian](https://github.com/TroddenSpade/EulerRK4-Solver/blob/master/docs/euler-rk4-fa.pdf)
 
